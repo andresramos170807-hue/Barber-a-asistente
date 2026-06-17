@@ -275,26 +275,16 @@
     conversacion.push({role:'user', content:texto});
 
     try {
-      const res = await fetch('https://api.anthropic.com/v1/messages', {
+      const res = await fetch('https://7.andresramos170807.workers.dev', {
         method: 'POST',
         headers: {'Content-Type':'application/json'},
         body: JSON.stringify({
-          model: 'claude-sonnet-4-6',
-          max_tokens: 1000,
-          system: `Eres el asistente de negocio de Andrés, responsable de marketing de LeBarbier en Sevilla. Vista actual: LeBarbier ${localActual}.
-
-Datos del local:
-${contextos[localActual]}
-
-- Responde en español, directo y claro
-- Usa **negrita** para datos importantes
-- Si detectas algo negativo (horas muertas, inactivos, bajo rendimiento), da una recomendación concreta
-- Máximo 120 palabras`,
-          messages: conversacion
+          question: texto,
+          local: localActual
         })
       });
       const data = await res.json();
-      const respuesta = data.content?.[0]?.text || 'Sin respuesta.';
+      const respuesta = data.response || 'Sin respuesta.';
       conversacion.push({role:'assistant', content:respuesta});
       hideTyping();
       addMsg('assistant', respuesta.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>'));
